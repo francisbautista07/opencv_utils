@@ -2,11 +2,13 @@
 #include <stdlib.h>
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 using namespace std;
 using namespace cv;
+
+#include "cvu_hog.h"
 
 /**
  * HOG-EXTRACTOR
@@ -15,100 +17,46 @@ using namespace cv;
  */
 int main(int argc, char **argv)
 {
-  vector<Rect> cells;
-  vector<Mat> cell_images;
-  vector<Rect> blocks;
-  vector<Mat> block_images;
 
-  Mat cell_image;
-  Mat block_image;
-
-	/**
-	 * If the number of arguments is not equal to 2 then exit.
-	 */
-	if(argc != 4) {
-		cout << "Syntax: hog-extractor [filename] [kernel_cell_size] [block_size]" << endl;
+  // Check input
+	if(argc != 5) {
+		cout << "Syntax: hog-extractor [filename] [kernel_cell_size] [block_size] [gaussian_blur_kernel]" << endl;
 		exit(-1);
 	}
- 
+
   // Read file as grayscale
   Mat original_image = imread(argv[1], 0);
-  original_image.copyTo(cell_image);
-  original_image.copyTo(block_image);
-
-  int height = original_image.rows;
-  int width = original_image.cols;
-
-  // Print out dimensions
-  cout << "Dimensions of image:" << endl;
-  cout << "height: " << height << endl; 
-  cout << "width: " << width << endl;
-  cout << "-------------------" << endl;
-
-  // Parameters of HOG
   int kernel_cell_size = atoi(argv[2]);
-  cout << "kernel cell size: " << kernel_cell_size << endl;
-
-  if(height % kernel_cell_size > 0 || width % kernel_cell_size > 0) {
-    cerr << "Invalid kernel cell size." << endl;
-    exit(-1);
-  }
-
   int block_size = atoi(argv[3]);
-  cout << "block size: " << block_size << endl;
-  int num_cells_height = height / kernel_cell_size;
-  int num_cells_width = width / kernel_cell_size;
-  if(num_cells_height % block_size > 0 || num_cells_width % block_size > 0) {
-    cerr << "Invalid block size." << endl;
+  int gaussian_blur_kernel = atoi(argv[4]);
+ 
+  vector<HOG_BLOCK> hog_blocks = compute_hog_features(original_image, kernel_cell_size, block_size, gaussian_blur_kernel);
+  if(hog_blocks.size() == 0) {
+    cerr << "Error" << endl;
     exit(-1);
   }
 
-  // Divide according to cell size
-  for(int i = 0; i < width; i += kernel_cell_size) {
-    for(int j = 0; j < height; j += kernel_cell_size) {
-      int upper_left_x = i;
-      int upper_left_y = j;
-
-      Rect r(upper_left_x, upper_left_y, kernel_cell_size, kernel_cell_size);
-      Mat imageROI = cell_image(r);
-
-      cells.push_back(r);
-      cell_images.push_back(imageROI);
+  // Display block contents
+  for(int i = 0; i < hog_blocks.size(); i++) {
+    cout << "BLOCK " << i << endl;
+    cout << "  Cell size: " << hog_blocks.at(i).cell_matrices.size() << endl;
+    cout << "  HoG size: " << hog_blocks.at(i).hogs.size() << endl;
+    cout << "-----------------------" << endl;
+    for(int j = 0; j < hog_blocks.at(i).hogs.size(); j++) {
+      cout << "    Cell " << j << ":" << endl;
+      for(int b = 0; b < 9; b++) {
+        cout << "      Bin " << b << ": " << hog_blocks.at(i).hogs.at(j).at(b);
+        cout << " <--> Normalized Bin " << b << ": " <<hog_blocks.at(i).normalized_hogs.at(j).at(b) << endl;
+      }
     }
   }
 
-  // Draw the division lines and show the image
-  Scalar s(255);
-  for(u_int i = 0; i < cells.size(); i++) {
-    //printf("Rectangle %d: %d, %d, %d, %d\n", i, cells.at(i).x, cells.at(i).y, cells.at(i).width, cells.at(i).height);
-    rectangle(cell_image,
-              Point(cells.at(i).x, cells.at(i).y),
-              Point(cells.at(i).x + cells.at(i).width, cells.at(i).y + cells.at(i).height),
-              s,
-              1, 8);
-  }
-
-  // Divide cells according to block size
-  for(int i = 0; i < width - kernel_cell_size; i += kernel_cell_size) {
-    for(int j = 0; j < height - kernel_cell_size; j += kernel_cell_size) {
-      int upper_left_x = i;
-      int upper_left_y = j;
-      Rect r(upper_left_x, upper_left_y, kernel_cell_size * block_size, kernel_cell_size * block_size);
-      Mat imageROI = original_image(r);
-
-      blocks.push_back(r);
-      block_images.push_back(imageROI);
-    }
-  }
-
-  imshow("ORIGINAL", original_image);
-  imshow("GRID", cell_image);
-  imshow("BLOCK", block_images.at(0));
-
-  cout << "Number of cells: " << cells.size() << endl;
-  cout << "Number of blocks: " << blocks.size() << endl;
-
-  waitKey(0);
+  cout << "----------------" << endl;
+  cout << "Number of blocks: " << hog_blocks.size() << endl;
+  cout << "Cells per block: " << hog_blocks.at(0).cell_matrices.size() << endl;
+  cout << "Cell size: " << kernel_cell_size << endl;
+  cout << "Block size: " << block_size << endl;
+  cout << "Dimensions: " << hog_blocks.size() * hog_blocks.at(0).cell_matrices.size() * 9 << endl;
 
 	return 0;
 }
