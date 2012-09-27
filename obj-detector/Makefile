@@ -1,8 +1,8 @@
 CXX 			=	clang++
 CXXFLAGS 	= -c -Wall
-EXEC			= resize-tool
-SOURCES 	= resize-tool.cpp
-OBJS			=	resize-tool.o
+EXEC			= obj-detector
+SOURCES 	= main.cpp
+OBJS			=	main.o
 INCLUDE 	= -I/usr/local/include \
 						-I/usr/local/include/opencv2
 LIBSDIR		= -L/usr/local/lib

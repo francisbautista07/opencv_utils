@@ -1,8 +1,10 @@
 CXX 			=	clang++
 CXXFLAGS 	= -c -Wall
-EXEC			= resize-tool
-SOURCES 	= resize-tool.cpp
-OBJS			=	resize-tool.o
+EXEC			= svm-validator
+SOURCES 	= main.cpp \
+						cvu_hog.cpp
+OBJS			=	main.o \
+						cvu_hog.o
 INCLUDE 	= -I/usr/local/include \
 						-I/usr/local/include/opencv2
 LIBSDIR		= -L/usr/local/lib

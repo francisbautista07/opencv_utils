@@ -1,8 +1,10 @@
 CXX 			=	clang++
 CXXFLAGS 	= -c -Wall
-EXEC			= resize-tool
-SOURCES 	= resize-tool.cpp
-OBJS			=	resize-tool.o
+EXEC			= svm-obj-detector
+SOURCES 	= svm-obj-detector.cpp \
+						cvu_hog.cpp
+OBJS			=	svm-obj-detector.o \
+						cvu_hog.o
 INCLUDE 	= -I/usr/local/include \
 						-I/usr/local/include/opencv2
 LIBSDIR		= -L/usr/local/lib

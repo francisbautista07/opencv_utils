@@ -29,12 +29,12 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
-  int length = atoi(argv[2]);
-  int width = atoi(argv[3]);
+  int length = atoi(argv[3]);
+  int width = atoi(argv[4]);
 
 	ifstream fin;
 
-	// The directory we want tot open
+	// The directory we want to open
 	string dir = argv[1];
 
 	// Stores the file path of a read image sample
