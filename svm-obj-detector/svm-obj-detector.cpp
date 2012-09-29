@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 		  }
 
 		  float response = svm.predict(new_instance);
-		  //cout << "Response: " << response << endl;
+		  cout << "Response: " << response << endl;
 		  if(response == 1) {
 		  	rectangle(output_image, Point(col, row), Point(col + win_width, row + win_length), Scalar(255, 0, 0));
 		  }		

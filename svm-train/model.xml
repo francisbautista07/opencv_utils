@@ -3,7 +3,7 @@
 <my_svm type_id="opencv-ml-svm">
   <svm_type>C_SVC</svm_type>
   <kernel><type>LINEAR</type></kernel>
-  <C>1.0000000000000001e-01</C>
+  <C>1.</C>
   <term_criteria><epsilon>2.2204460492503131e-16</epsilon>
     <iterations>10</iterations></term_criteria>
   <var_all>3780</var_all>

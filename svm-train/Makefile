@@ -1,10 +1,8 @@
 CXX 			=	clang++
 CXXFLAGS 	= -c -Wall
 EXEC			= svm-train
-SOURCES 	= svm-train.cpp \
-						cvu_hog.cpp
-OBJS			=	svm-train.o \
-						cvu_hog.o
+SOURCES 	= svm-train.cpp
+OBJS			=	svm-train.o
 INCLUDE 	= -I/usr/local/include \
 						-I/usr/local/include/opencv2
 LIBSDIR		= -L/usr/local/lib

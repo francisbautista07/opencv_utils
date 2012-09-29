@@ -6,8 +6,6 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include "cvu_hog.h"
-
 using namespace std;
 using namespace cv;
 
@@ -119,9 +117,9 @@ int main(int argc, char **argv)
   // Set up SVM's parameters
   CvSVMParams params;
   params.svm_type = CvSVM::C_SVC;
-  params.C = 0.1;
+  params.C = 0.01;
   params.kernel_type = CvSVM::LINEAR;
-  params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, 10, 1e-6);
+  params.term_crit = cvTermCriteria(CV_TERMCRIT_ITER, (int)1e7, 1e-6);
 
 	cout << "Number of samples: " << num_lines << endl;
   cout << "Training data..." << endl;

@@ -118,19 +118,21 @@ vector<HOG_BLOCK> compute_hog_features(Mat image, int kernel_cell_size, int bloc
 
   // Normalize the hogs
   for(int i = 0; i < hog_blocks.size(); i++) {
+    float norm = 0;
+    for(int x = 0; x < hog_blocks.at(i).hogs.size(); x++) {
+      for(int y = 0; y < hog_blocks.at(i).hogs.at(x).size(); y++) {
+        norm += pow(hog_blocks.at(i).hogs.at(x).at(y), 2);
+      }
+    }
+
+    norm += sqrt(norm);
+    
     for(int j = 0; j < hog_blocks.at(i).hogs.size(); j++) {
       vector<float> normalized_hogs;
       normalized_hogs.resize(BIN_COUNT);
-      float l2norm = 0;
-      
-      for(int b = 0; b < BIN_COUNT; b++) {
-        l2norm += pow(hog_blocks.at(i).hogs.at(j).at(b), 2);
-      }
-      
-      l2norm = sqrt(l2norm);
 
       for(int b = 0; b < BIN_COUNT; b++) {
-        normalized_hogs.at(b) = hog_blocks.at(i).hogs.at(j).at(b) / l2norm;
+        normalized_hogs.at(b) = hog_blocks.at(i).hogs.at(j).at(b) / norm;
       }
 
       hog_blocks.at(i).normalized_hogs.push_back(normalized_hogs);
